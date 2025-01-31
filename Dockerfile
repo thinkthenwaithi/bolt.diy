@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml ./
 # Instalar dependências
 RUN pnpm install
 
-# Copiar código fonte e scripts
+# Copiar código  fonte e scripts
 COPY . .
 
 # Garantir que o bindings.sh tem permissões de execução e formato correto
