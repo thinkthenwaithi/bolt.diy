@@ -15,10 +15,11 @@ RUN pnpm install
 COPY . .
 
 # Build da aplicação
-RUN pnpm run build
-
-# Debug - listar arquivos gerados
-RUN ls -la build/client
+RUN pnpm run build && \
+    echo "Conteúdo do diretório build:" && \
+    ls -la build && \
+    echo "Conteúdo do diretório build/client:" && \
+    ls -la build/client
 
 # Estágio final com nginx
 FROM nginx:alpine
@@ -29,6 +30,13 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copiar build da aplicação
 COPY --from=builder /app/build/client /usr/share/nginx/html/
 
+# Criar script de verificação
+RUN echo '#!/bin/sh\n\
+echo "Conteúdo de /usr/share/nginx/html:"\n\
+ls -la /usr/share/nginx/html\n\
+exec nginx -g "daemon off;"' > /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
 # Expor porta
 EXPOSE 80
 
@@ -38,4 +46,4 @@ ENV NODE_ENV=production \
     WRANGLER_SEND_METRICS=false
 
 # Comando para iniciar
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
