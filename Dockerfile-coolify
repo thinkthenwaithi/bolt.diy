@@ -32,7 +32,3 @@ ENV NODE_ENV=production \
 
 # Comando para iniciar usando o script dockerstart
 CMD ["pnpm", "run", "dockerstart"]
-
-
--RUN corepack enable pnpm && pnpm install
-+RUN npm install -g pnpm@8.4.0 && pnpm install
